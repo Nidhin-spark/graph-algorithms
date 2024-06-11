@@ -1,4 +1,5 @@
-(use-modules (gnu packages python))
+(use-modules (gnu packages game-development)
+             (gnu packages python))
 
 (packages->manifest
- (list python))
+ (list python python-pygame))
