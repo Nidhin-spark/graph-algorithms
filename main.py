@@ -1,11 +1,15 @@
 # Example file showing a basic pygame "game loop"
 import pygame
+import graph
+from pdb import set_trace as bp
 
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
+
+graph = graph.Graph(3, 0.9, pygame.Surface.get_rect(screen))
 
 while running:
     # poll for events
@@ -18,7 +22,7 @@ while running:
     screen.fill("white")
 
     # RENDER YOUR GAME HERE
-    
+
 
     # flip() the display to put your work on screen
     pygame.display.flip()
