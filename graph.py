@@ -1,4 +1,5 @@
 from pygame import draw, Color, Rect
+from pygame.math import Vector2
 import random
 import math
 
@@ -17,12 +18,13 @@ class Edge:
         self.key2 = dst.label + src.label
 
 def random_point_in_rect(rect, margin):
-    return (random.randrange(rect.left + margin, rect.right - margin),
-            random.randrange(rect.top + margin, rect.bottom - margin))
+    return Vector2(random.randrange(rect.left + margin, rect.right - margin),
+                   random.randrange(rect.top + margin, rect.bottom - margin))
 
 class Graph:
     def __init__(self, nodes_count, edge_density, rect):
         self.margin = 50
+        self.radius = 50
         label = 'A'
         self.rect = rect
         self.nodes = {}
@@ -47,7 +49,7 @@ class Graph:
             max_edge = None
             max_dist = -math.inf
             for edge in self.edges.values():
-                dist = self.distance2(edge.src, edge.dst)
+                dist = edge.src.pos.distance_to(edge.dst.pos)
                 if dist > max_dist:
                     max_edge = edge
                     max_dist = dist
@@ -56,11 +58,6 @@ class Graph:
     def edge_quotient(self):
         max_edges = len(self.nodes) * (len(self.nodes) - 1) / 2
         return len(self.edges) / 2 / max_edges
-
-    def distance2(self, nodeA, nodeB):
-        posA = nodeA.pos
-        posB = nodeB.pos
-        return (posA[0] - posB[0]) ** 2 + (posA[1] - posB[1]) ** 2
 
     def make_edge(self, nodeA, nodeB, weight):
         edge = Edge(self.nodes[nodeA], self.nodes[nodeB], weight)
@@ -85,18 +82,23 @@ class Graph:
     def generate_node(self, label):
         node = Node(random_point_in_rect(self.rect, self.margin), label)
         for other in self.nodes:
-            if self.distance2(node, self.nodes[other]) < (2 * self.margin) ** 2:
+            if node.pos.distance_to(self.nodes[other].pos) < (2 * self.margin):
                 return None
         return node
 
+    def draw_edge(self, screen, edge):
+            diff = edge.dst.pos - edge.src.pos
+            diff.scale_to_length(diff.magnitude() - self.radius)
+            pt1 = edge.dst.pos - diff
+            pt2 = edge.src.pos + diff
+            draw.line(screen, Color(0,0,0), pt1, pt2, 5)
+
     def draw(self, screen):
-        radius = 50
         screen.fill("white")
         for n in self.nodes:
-            draw.circle(screen, Color(0,0,0), self.nodes[n].pos, radius, 5)
+            draw.circle(screen, Color(0,0,0), self.nodes[n].pos, self.radius, 5)
         for e in self.edges:
             # Only draw edges once.
             if ord(e[0]) >= ord(e[1]):
                 continue
             edge = self.edges[e]
-            draw.line(screen, Color(0,0,0), edge.src.pos, edge.dst.pos, 5)
