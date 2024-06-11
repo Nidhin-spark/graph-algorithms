@@ -22,20 +22,20 @@ def random_point_in_rect(rect, margin):
                    random.randrange(rect.top + margin, rect.bottom - margin))
 
 class Graph:
-    def __init__(self, nodes_count, edge_density, rect):
+    def __init__(self, nodes_count, edge_density, rect, typeface):
         self.margin = 50
         self.radius = 50
-        label = 'A'
+        self.typeface = typeface
         self.rect = rect
         self.nodes = {}
         self.edges = {}
+        label = 'A'
         while len(self.nodes) < nodes_count:
             node = self.generate_node(label)
             if node:
                 self.nodes[label] = node
                 label = chr(ord(label) + 1)
 
-        edge_list = []
         for a in self.nodes:
             for b in self.nodes:
                 if a == b: continue
@@ -96,9 +96,15 @@ class Graph:
     def draw(self, screen):
         screen.fill("white")
         for n in self.nodes:
-            draw.circle(screen, Color(0,0,0), self.nodes[n].pos, self.radius, 5)
+            node = self.nodes[n]
+            draw.circle(screen, Color(0,0,0), node.pos, self.radius, 5)
+            text_rect = self.typeface.get_rect(node.label)
+            text_rect.center = node.pos
+            self.typeface.render_to(screen, text_rect, node.label)
+
         for e in self.edges:
             # Only draw edges once.
             if ord(e[0]) >= ord(e[1]):
                 continue
             edge = self.edges[e]
+            self.draw_edge(screen, edge)
