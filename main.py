@@ -4,6 +4,7 @@ import pygame.freetype
 from pygame import key
 from graph import Graph
 import random
+import search
 from pdb import set_trace as bp
 
 # pygame setup
@@ -14,28 +15,33 @@ running = True
 
 typeface = pygame.freetype.SysFont("DejaVu Sans", 60)
 graph = None
-def make_config(node_count, edge_density, seed):
-    return {'node_count': node_count, 'edge_density': edge_density, 'seed': seed}
-config = make_config(3, 0.9, 0)
+def make_config(node_count, edge_density, seed, initial, goal):
+    return {'node_count': node_count, 'edge_density': edge_density, 'seed': seed,
+            'initial': initial, 'goal': goal}
+config = make_config(3, 0.9, 0, 'A', 'C')
 
-graph_list = [make_config(5, 0.90, 1),
-              make_config(6, 0.40, 8),
-              make_config(7, 0.40, 21),
-              make_config(8, 0.4, 2),
-              make_config(9, 0.35, 11)]
+graph_list = [make_config(5, 0.90, 1, 'A', 'C'),
+              make_config(6, 0.40, 8, 'E', 'B'),
+              make_config(7, 0.40, 21, 'C', 'G'),
+              make_config(8, 0.4, 2, 'A', 'H'),
+              make_config(9, 0.35, 11, 'F', 'A')]
 graph_index = 0
 
+search_state = None
+
 def load_config(config):
-    global graph, typeface
+    global graph, typeface, search_state
     random.seed(config['seed'])
     print(config)
-    graph = Graph(config['node_count'], config['edge_density'], pygame.Surface.get_rect(screen), typeface)
-
-def load_graph(config):
-    global graph
+    graph = Graph(config['node_count'], config['edge_density'], pygame.Surface.get_rect(screen), typeface,
+                  config['initial'], config['goal'])
+    search_state = search.bfs_init(graph)
 
 def reload_graph():
     global config
+    if 'initial' not in config:
+        config['initial'] = 'A'
+        config['terminal'] = chr(ord('A') + config['node_count'] - 1)
     load_config(config)
 
 load_config(graph_list[graph_index])
@@ -72,6 +78,9 @@ while running:
                 if graph_index < len(graph_list) - 1:
                     graph_index += 1
                 load_config(graph_list[graph_index])
+            elif event.key == pygame.K_s:
+                if search_state == search.MORE_STEPS_NEEDED:
+                   search_state = search.bfs_step(graph)
 
     graph.draw(screen)
 
