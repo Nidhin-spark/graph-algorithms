@@ -13,17 +13,32 @@ clock = pygame.time.Clock()
 running = True
 
 typeface = pygame.freetype.SysFont("DejaVu Sans", 60)
-node_count = 3
-edge_density = 0.9
 graph = None
-seed = 0
+def make_config(node_count, edge_density, seed):
+    return {'node_count': node_count, 'edge_density': edge_density, 'seed': seed}
+config = make_config(3, 0.9, 0)
+
+graph_list = [make_config(5, 0.90, 1),
+              make_config(6, 0.40, 8),
+              make_config(7, 0.40, 21),
+              make_config(8, 0.4, 2),
+              make_config(9, 0.35, 11)]
+graph_index = 0
+
+def load_config(config):
+    global graph, typeface
+    random.seed(config['seed'])
+    print(config)
+    graph = Graph(config['node_count'], config['edge_density'], pygame.Surface.get_rect(screen), typeface)
+
+def load_graph(config):
+    global graph
 
 def reload_graph():
-    global graph, node_count, edge_density, typeface, seed
-    print(f"node_count = {node_count}, edge_density = {edge_density}, seed = {seed}")
-    graph = Graph(node_count, edge_density, pygame.Surface.get_rect(screen), typeface)
+    global config
+    load_config(config)
 
-reload_graph()
+load_config(graph_list[graph_index])
 
 while running:
     # poll for events
@@ -33,23 +48,30 @@ while running:
             running = False
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_r:
-                seed += 1
-                random.seed(seed)
+                config['seed'] += 1
                 reload_graph()
             elif event.key == pygame.K_q:
                 running = False
             elif event.key == pygame.K_k:
-                node_count += 1
+                config['node_count'] += 1
                 reload_graph()
             elif event.key == pygame.K_j:
-                node_count -= 1
+                config['node_count'] -= 1
                 reload_graph()
             elif event.key == pygame.K_h:
-                edge_density -= 0.05
+                config['edge_density'] -= 0.05
                 reload_graph()
             elif event.key == pygame.K_l:
-                edge_density += 0.05
+                config['edge_density'] += 0.05
                 reload_graph()
+            elif event.key == pygame.K_LEFTBRACKET:
+                if graph_index > 0:
+                    graph_index -= 1
+                load_config(graph_list[graph_index])
+            elif event.key == pygame.K_RIGHTBRACKET:
+                if graph_index < len(graph_list) - 1:
+                    graph_index += 1
+                load_config(graph_list[graph_index])
 
     graph.draw(screen)
 
