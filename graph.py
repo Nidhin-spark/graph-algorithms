@@ -91,13 +91,23 @@ class Graph:
             diff.scale_to_length(diff.magnitude() - self.radius)
             pt1 = edge.dst.pos - diff
             pt2 = edge.src.pos + diff
-            draw.line(screen, Color(0,0,0), pt1, pt2, 5)
+            draw.line(screen, Color(128,128,128), pt1, pt2, 5)
+            theta = math.radians(diff.angle_to((0,0))) 
+            line_center = (edge.dst.pos + edge.src.pos) / 2
+            label = str(edge.weight)
+            text_size = 30
+            text_rect = self.typeface.get_rect(label, size=text_size)
+            rect_radius = Vector2(text_rect.left - text_rect.right, text_rect.top - text_rect.bottom).distance_to((0,0)) / 2
+            #Vector2.from_polar((rect_radius, theta))
+            text_rect.center = line_center + \
+                               rect_radius * Vector2(-math.sin(theta), math.cos(theta))
+            self.typeface.render_to(screen, text_rect, label, Color(255,0,0), size=text_size)
 
     def draw(self, screen):
         screen.fill("white")
         for n in self.nodes:
             node = self.nodes[n]
-            draw.circle(screen, Color(0,0,0), node.pos, self.radius, 5)
+            draw.circle(screen, Color(128,128,128), node.pos, self.radius, 5)
             text_rect = self.typeface.get_rect(node.label)
             text_rect.center = node.pos
             self.typeface.render_to(screen, text_rect, node.label)
