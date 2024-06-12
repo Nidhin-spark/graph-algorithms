@@ -29,13 +29,26 @@ graph_index = 0
 
 search_state = None
 
+algorithms = {
+    'bfs': {
+        'init': search.bfs_init,
+        'step': search.bfs_step},
+    'dijkstra': {
+        'init': search.dijkstra_init,
+        'step': search.dijkstra_step}}
+
+# Change this to 'dijkstra' to use Dijkstra's Algorithm.
+algorithm = 'bfs'
+search_init = algorithms[algorithm]['init']
+search_step = algorithms[algorithm]['step']
+
 def load_config(config):
     global graph, typeface, search_state
     random.seed(config['seed'])
     print(config)
     graph = Graph(config['node_count'], config['edge_density'], pygame.Surface.get_rect(screen), typeface,
                   config['initial'], config['goal'])
-    search_state = search.bfs_init(graph)
+    search_state = search_init(graph)
 
 def reload_graph():
     global config
@@ -80,7 +93,7 @@ while running:
                 load_config(graph_list[graph_index])
             elif event.key == pygame.K_s:
                 if search_state == search.MORE_STEPS_NEEDED:
-                   search_state = search.bfs_step(graph)
+                   search_state = search_step(graph)
 
     graph.draw(screen)
 

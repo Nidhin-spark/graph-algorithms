@@ -1,4 +1,4 @@
-from queue import Queue, Priority
+from queue import Queue, PriorityQueue
 from graph import Graph
 
 GOAL_FOUND = 1
@@ -19,10 +19,10 @@ def bfs_init(graph):
         # Return path to show we're done.
         return GOAL_FOUND
     return MORE_STEPS_NEEDED
-    
+
 def bfs_step(graph):
     if graph.frontier.empty():
-        return GOAL_NOT_REACHABLE 
+        return GOAL_NOT_REACHABLE
     else:
        node = graph.frontier.get()
        del graph.frontier_set[node]
@@ -39,26 +39,28 @@ def bfs_step(graph):
             graph.path_cost[other] = path_cost
           elif path_cost < graph.path_cost[other]:
             graph.parent[other] = node
-            graph.path_cost[other] = path_cost 
+            graph.path_cost[other] = path_cost
        return MORE_STEPS_NEEDED
 
-def bfs(graph):
-   state = bfs_init(graph)
-   while state == MORE_STEPS_NEEDED:
-      state = bfs_step(graph)
-   return state
+# Part 1:
+# 1. Copy bfs_init and bfs_step, chaning bfs to dijkstra.
+# 2. Change the line setting 'algorithm' to 'bfs' to say dijkstra instead.
+# 3. Initialize frontier as a PriorityQueue.
+# 4. Update the graph.frontier.put() lines to push the tuple (path_cost, node) instead of just node.
+#      - This ensures that the order of path_cost is used as the priority.
+# 5. Update the graph.frontier.get() line to take the second element of the tuple.
+# 6. Test by running main.py and stepping through by pressing 's' to step forward.
+#    '[' and  ']' cycles through previously defined graphs.
+#
+# Let me know if you have any problems running or debugging this, or get stuck at any point, and I'd be happy to help.
+# Also If you find it too easy, I can set you something more challenging.
+# I reccomend using print statements to see the path_costs, and which node it's considering.
 
-#def bredthfirstsearch(grpah,start,goal):
-#  queue=[]
-#  visited=[]
-#  queue.append(start)
-#  visited.append(start)
-#  while queue:
-#    current_node=queue.pop(0)
-#    if current_node == goal:
-#      return "SUCCESS"
-#    for neighbour in grpah[current_node]:
-#      if neighbour not in visited:
-#        visited.append(neighbour)
-#        queue.append(neighbour)
-#  return "GOAL NOT FOUND"
+# Part 2. Can you combine these two algorithms into a single 'bestfirstsearch'
+# function that uses a priority queue to emulate both Dijkstra and
+# breadth-first search?
+#
+# Hint: Pass in a function f that computes path cost and use that as the priority.
+
+# Part 3.
+# What would you need to change implement depth first search?
