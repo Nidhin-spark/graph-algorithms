@@ -42,7 +42,7 @@ def bfs_step(graph):
             graph.path_cost[other] = path_cost
        return MORE_STEPS_NEEDED
 
-# Part 1:
+# Task 1:
 # 1. Copy bfs_init and bfs_step, chaning bfs to dijkstra.
 # 2. Change the line setting 'algorithm' to 'bfs' to say dijkstra instead.
 # 3. Initialize frontier as a PriorityQueue.
@@ -54,13 +54,14 @@ def bfs_step(graph):
 #
 # Let me know if you have any problems running or debugging this, or get stuck at any point, and I'd be happy to help.
 # Also If you find it too easy, I can set you something more challenging.
-# I reccomend using print statements to see the path_costs, and which node it's considering.
+# I recommend using print statements to see the path_costs, and which node it's considering.
 
-# Part 2. Can you combine these two algorithms into a single 'bestfirstsearch'
+# Task 2:
+# Can you combine these two algorithms into a single 'bestfirstsearch'
 # function that uses a priority queue to emulate both Dijkstra and
 # breadth-first search?
 #
 # Hint: Pass in a function f that computes path cost and use that as the priority.
 
-# Part 3.
+# Task 3:
 # What would you need to change implement depth first search?
