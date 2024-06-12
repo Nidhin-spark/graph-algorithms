@@ -3,6 +3,7 @@ import pygame
 import pygame.freetype
 from pygame import key
 from graph import Graph
+import random
 from pdb import set_trace as bp
 
 # pygame setup
@@ -15,10 +16,11 @@ typeface = pygame.freetype.SysFont("DejaVu Sans", 60)
 node_count = 3
 edge_density = 0.9
 graph = None
+seed = 0
 
 def reload_graph():
-    global graph, node_count, edge_density, typeface
-    print("node_count = {node_count}, edge_density = {edge_density}")
+    global graph, node_count, edge_density, typeface, seed
+    print(f"node_count = {node_count}, edge_density = {edge_density}, seed = {seed}")
     graph = Graph(node_count, edge_density, pygame.Surface.get_rect(screen), typeface)
 
 reload_graph()
@@ -31,6 +33,8 @@ while running:
             running = False
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_r:
+                seed += 1
+                random.seed(seed)
                 reload_graph()
             elif event.key == pygame.K_q:
                 running = False

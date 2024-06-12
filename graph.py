@@ -23,7 +23,7 @@ def random_point_in_rect(rect, margin):
 
 class Graph:
     def __init__(self, nodes_count, edge_density, rect, typeface):
-        self.margin = 50
+        self.margin = 100
         self.radius = 50
         self.typeface = typeface
         self.rect = rect
